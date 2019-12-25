@@ -51,11 +51,12 @@ end
 
 #save iptable & sysctl && restart
 execute "Save and restart" do
+  iface = node['pptpd']['interface']
   command "iptables -I INPUT -p tcp --dport 1723 -j ACCEPT"
   command "iptables -I INPUT -p gre -j ACCEPT"
-  command "iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE"
-  command "iptables -A FORWARD -i ppp+ -o eth0 -j ACCEPT"
-  command "iptables -A FORWARD -i eth0 -o ppp+ -j ACCEPT"
+  command "iptables -t nat -A POSTROUTING -o #{iface} -j MASQUERADE"
+  command "iptables -A FORWARD -i ppp+ -o #{iface} -j ACCEPT"
+  command "iptables -A FORWARD -i #{iface} -o ppp+ -j ACCEPT"
   command "iptables-save"
   command "sysctl -p"
 end
